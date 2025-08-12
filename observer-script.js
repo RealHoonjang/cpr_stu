@@ -127,6 +127,9 @@ function initializeSocket() {
             console.log('연결 상태:', socket.connected);
             updateConnectionStatus(true);
             showMessage('교사용 서버에 연결되었습니다!', 'success');
+            
+            // 실제 연결 상태 확인
+            testServerConnection();
         });
         
         // 연결 실패 시 시뮬레이션 모드로 전환
@@ -164,6 +167,40 @@ function simulateServerConnection() {
         document.getElementById('currentGroupInfo').textContent = '현재 조: 1조';
         document.getElementById('sessionStatus').textContent = '세션 상태: 진행 중';
     }, 1000);
+}
+
+// 실제 서버 연결 상태 테스트
+function testServerConnection() {
+    console.log('실제 서버 연결 상태 테스트 중...');
+    
+    // HTTP 요청으로 서버 연결 확인
+    fetch('http://127.0.0.1:3000/api/test', {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include'
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    })
+    .then(data => {
+        console.log('서버 연결 테스트 성공:', data);
+        console.log('연결된 클라이언트 수:', data.connectedClients);
+        console.log('등록된 관찰자 수:', data.observers);
+        
+        if (data.connectedClients > 0) {
+            showMessage('실제 서버 연결 확인됨!', 'success');
+        } else {
+            console.warn('소켓 연결은 되었지만 실제 클라이언트로 인식되지 않음');
+        }
+    })
+    .catch(error => {
+        console.error('서버 연결 테스트 실패:', error);
+        console.log('CORS 또는 네트워크 문제로 실제 연결이 차단됨');
+        showMessage('서버 연결 테스트 실패 - CORS 문제일 수 있음', 'error');
+    });
 }
 
 // 실제 소켓 이벤트 설정
