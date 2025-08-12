@@ -101,12 +101,21 @@ function initializeSocket() {
     // 실제 서버 연결 시도
     try {
         console.log('교사용 서버에 연결 시도 중...');
-        socket = io(SERVER_URL);
+        console.log('서버 URL:', SERVER_URL);
+        
+        socket = io(SERVER_URL, {
+            transports: ['websocket', 'polling'],
+            timeout: 5000,
+            forceNew: true
+        });
+        
         setupSocketEvents();
         
         // 연결 성공 시 시뮬레이션 모드 비활성화
         socket.on('connect', () => {
             console.log('교사용 서버에 성공적으로 연결되었습니다!');
+            console.log('소켓 ID:', socket.id);
+            console.log('연결 상태:', socket.connected);
             updateConnectionStatus(true);
             showMessage('교사용 서버에 연결되었습니다!', 'success');
         });
@@ -114,7 +123,19 @@ function initializeSocket() {
         // 연결 실패 시 시뮬레이션 모드로 전환
         socket.on('connect_error', (error) => {
             console.log('서버 연결 실패, 시뮬레이션 모드로 전환:', error);
+            console.log('에러 상세:', error.message);
             simulateServerConnection();
+        });
+        
+        // 연결 시도 중
+        socket.on('connecting', () => {
+            console.log('서버에 연결 시도 중...');
+        });
+        
+        // 연결 해제
+        socket.on('disconnect', (reason) => {
+            console.log('서버 연결 해제:', reason);
+            updateConnectionStatus(false);
         });
         
     } catch (error) {
