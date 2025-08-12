@@ -94,13 +94,13 @@ const roleChecklists = {
 };
 
 // 서버 URL 설정 (GitHub Pages 배포 후 실제 서버 URL로 변경)
-const SERVER_URL = 'https://your-server-url.com'; // 실제 서버 URL로 변경 필요
+const SERVER_URL = 'http://127.0.0.1:3000'; // 실제 서버 URL로 변경 필요
 
 // 소켓 연결 초기화
 function initializeSocket() {
     // GitHub Pages에서는 서버가 없으므로 시뮬레이션 모드
     if (window.location.hostname === 'localhost' || window.location.hostname.includes('github.io')) {
-        console.log('GitHub Pages 모드: 서버 연결 시뮬레이션');
+        console.log('교사용 페이지와 연결');
         simulateServerConnection();
         return;
     }
@@ -420,3 +420,4 @@ function resetToRegistration() {
 document.addEventListener('DOMContentLoaded', () => {
     initializeSocket();
 });
+
