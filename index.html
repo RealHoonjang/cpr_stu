@@ -406,6 +406,35 @@
         </div>
     </div>
 
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" integrity="sha384-mZLF4UVrpi/QTWPA7BjNPEnkIfRFn5KdkEM1VZq1sQy1ht4+WwBZJf8UjH1PscNE" crossorigin="anonymous"></script>
+    <script>
+        // Socket.IO 로드 확인
+        window.addEventListener('load', function() {
+            if (typeof io === 'undefined') {
+                console.error('Socket.IO 라이브러리를 로드할 수 없습니다.');
+                // 대체 CDN 시도
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js';
+                script.onload = function() {
+                    console.log('대체 CDN에서 Socket.IO 로드 성공');
+                    // Socket.IO 로드 후 초기화
+                    if (typeof initializeSocket === 'function') {
+                        initializeSocket();
+                    }
+                };
+                script.onerror = function() {
+                    console.error('모든 Socket.IO CDN 로드 실패');
+                    // 시뮬레이션 모드로 전환
+                    if (typeof simulateServerConnection === 'function') {
+                        simulateServerConnection();
+                    }
+                };
+                document.head.appendChild(script);
+            } else {
+                console.log('Socket.IO 라이브러리 로드 성공');
+            }
+        });
+    </script>
     <script src="observer-script.js"></script>
 </body>
 </html>
