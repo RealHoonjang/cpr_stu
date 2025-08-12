@@ -98,10 +98,19 @@ const SERVER_URL = 'http://127.0.0.1:3000'; // 교사용 서버 URL
 
 // 소켓 연결 초기화
 function initializeSocket() {
+    // Socket.IO 라이브러리 로드 확인
+    if (typeof io === 'undefined') {
+        console.error('Socket.IO 라이브러리가 로드되지 않았습니다.');
+        console.log('시뮬레이션 모드로 전환합니다.');
+        simulateServerConnection();
+        return;
+    }
+    
     // 실제 서버 연결 시도
     try {
         console.log('교사용 서버에 연결 시도 중...');
         console.log('서버 URL:', SERVER_URL);
+        console.log('Socket.IO 버전:', io.version);
         
         socket = io(SERVER_URL, {
             transports: ['websocket', 'polling'],
