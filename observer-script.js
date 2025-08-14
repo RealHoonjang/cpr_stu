@@ -410,8 +410,15 @@ function registerObserver() {
     
     if (window.location.hostname.includes('github.io')) {
         console.log('GitHub Pages 모드: 시뮬레이션으로 전환');
+        console.log('simulateObserverRegistration 함수 호출 시도...');
+        
         // GitHub Pages 모드: 시뮬레이션
-        simulateObserverRegistration(observerName, observerNumber, targetStudentNumber);
+        try {
+            simulateObserverRegistration(observerName, observerNumber, targetStudentNumber);
+            console.log('✅ simulateObserverRegistration 함수 호출 성공');
+        } catch (error) {
+            console.error('❌ simulateObserverRegistration 함수 호출 실패:', error);
+        }
         return;
     }
     
@@ -436,53 +443,81 @@ function registerObserver() {
 
 // GitHub Pages 모드에서 관찰자 등록 시뮬레이션
 function simulateObserverRegistration(observerName, observerNumber, targetStudentNumber) {
-    console.log('=== 시뮬레이션 모드로 관찰자 등록 ===');
-    console.log('입력값:', { observerName, observerNumber, targetStudentNumber });
+    console.log('=== 시뮬레이션 모드로 관찰자 등록 시작 ===');
+    console.log('함수 호출됨 - 입력값:', { observerName, observerNumber, targetStudentNumber });
     
-    const mockRole = '초기발견자1'; // 시뮬레이션용 역할
-    console.log('시뮬레이션 역할:', mockRole);
-    
-    currentChecklist = roleChecklists[mockRole] || [];
-    checklistState = new Array(currentChecklist.length).fill(false);
-    
-    console.log('체크리스트 설정 완료:', {
-        checklistLength: currentChecklist.length,
-        stateLength: checklistState.length
-    });
+    try {
+        const mockRole = '초기발견자1'; // 시뮬레이션용 역할
+        console.log('시뮬레이션 역할:', mockRole);
+        
+        currentChecklist = roleChecklists[mockRole] || [];
+        checklistState = new Array(currentChecklist.length).fill(false);
+        
+        console.log('체크리스트 설정 완료:', {
+            checklistLength: currentChecklist.length,
+            stateLength: checklistState.length
+        });
 
-    document.getElementById('checklistContainer').classList.add('active');
-    
-    document.getElementById('roleTitle').textContent = `관찰 대상: ${mockRole}`;
-    document.getElementById('studentInfo').textContent = `${targetStudentNumber}번 학생`;
-    
-    renderChecklist();
-    updateProgress();
-    
-    console.log('✅ 시뮬레이션 모드 관찰자 등록 완료!');
-    showMessage('GitHub Pages 모드: 관찰이 시작되었습니다!', 'success');
+        console.log('DOM 요소 업데이트 시작...');
+        document.getElementById('checklistContainer').classList.add('active');
+        
+        document.getElementById('roleTitle').textContent = `관찰 대상: ${mockRole}`;
+        document.getElementById('studentInfo').textContent = `${targetStudentNumber}번 학생`;
+        
+        console.log('체크리스트 렌더링 시작...');
+        renderChecklist();
+        updateProgress();
+        
+        console.log('✅ 시뮬레이션 모드 관찰자 등록 완료!');
+        showMessage('GitHub Pages 모드: 관찰이 시작되었습니다!', 'success');
+        
+    } catch (error) {
+        console.error('❌ 시뮬레이션 모드에서 오류 발생:', error);
+        console.error('오류 상세:', error.message);
+        console.error('오류 스택:', error.stack);
+    }
 }
 
 // 체크리스트 렌더링
 function renderChecklist() {
-    const checklistEl = document.getElementById('checklist');
-    checklistEl.innerHTML = '';
+    console.log('=== 체크리스트 렌더링 시작 ===');
+    console.log('렌더링할 체크리스트:', currentChecklist);
+    console.log('체크리스트 상태:', checklistState);
+    
+    try {
+        const checklistEl = document.getElementById('checklist');
+        if (!checklistEl) {
+            console.error('❌ checklist 요소를 찾을 수 없음');
+            return;
+        }
+        
+        console.log('체크리스트 요소 찾음, 내용 초기화 중...');
+        checklistEl.innerHTML = '';
 
-    currentChecklist.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.className = `checklist-item ${checklistState[index] ? 'checked' : ''}`;
+        currentChecklist.forEach((item, index) => {
+            console.log(`항목 ${index} 렌더링:`, item);
+            const li = document.createElement('li');
+            li.className = `checklist-item ${checklistState[index] ? 'checked' : ''}`;
+            
+            li.innerHTML = `
+                <div class="checkbox">
+                    <input type="checkbox" 
+                           id="check-${index}" 
+                           ${checklistState[index] ? 'checked' : ''}
+                           onchange="toggleChecklistItem(${index})">
+                    <span>${item}</span>
+                </div>
+            `;
+            
+            checklistEl.appendChild(li);
+        });
         
-        li.innerHTML = `
-            <div class="checkbox">
-                <input type="checkbox" 
-                       id="check-${index}" 
-                       ${checklistState[index] ? 'checked' : ''}
-                       onchange="toggleChecklistItem(${index})">
-                <span>${item}</span>
-            </div>
-        `;
+        console.log(`✅ 체크리스트 렌더링 완료: ${currentChecklist.length}개 항목`);
         
-        checklistEl.appendChild(li);
-    });
+    } catch (error) {
+        console.error('❌ 체크리스트 렌더링 중 오류:', error);
+        console.error('오류 상세:', error.message);
+    }
 }
 
 // 체크리스트 항목 토글
