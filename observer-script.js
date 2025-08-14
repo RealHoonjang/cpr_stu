@@ -344,9 +344,12 @@ function showMessage(message, type) {
 
 // 랜덤 학생 배정
 function assignRandomStudent() {
-    console.log('랜덤 배정 버튼 클릭됨');
+    console.log('=== 랜덤 배정 함수 호출됨 ===');
+    console.log('현재 도메인:', window.location.hostname);
+    console.log('GitHub Pages 포함 여부:', window.location.hostname.includes('github.io'));
     
     if (window.location.hostname.includes('github.io')) {
+        console.log('GitHub Pages 모드로 진입');
         // GitHub Pages 모드: 시뮬레이션
         const mockStudents = [
             { number: 1, role: '초기발견자1', name: '1번 학생' },
@@ -360,12 +363,14 @@ function assignRandomStudent() {
         const randomIndex = Math.floor(Math.random() * mockStudents.length);
         const selectedStudent = mockStudents[randomIndex];
         
+        console.log('선택된 학생:', selectedStudent);
         document.getElementById('targetStudentNumber').value = selectedStudent.number;
         showMessage(`${selectedStudent.number}번 학생 (${selectedStudent.role})이 랜덤으로 배정되었습니다.`, 'success');
         
         // 랜덤 배정 후 자동으로 관찰자 등록
         console.log('GitHub Pages 모드: 랜덤 배정 완료, 자동으로 관찰자 등록 시도...');
         setTimeout(() => {
+            console.log('타이머 완료, registerObserver 호출');
             registerObserver();
         }, 1000); // 1초 후 자동 등록
         return;
@@ -431,10 +436,19 @@ function registerObserver() {
 
 // GitHub Pages 모드에서 관찰자 등록 시뮬레이션
 function simulateObserverRegistration(observerName, observerNumber, targetStudentNumber) {
+    console.log('=== 시뮬레이션 모드로 관찰자 등록 ===');
+    console.log('입력값:', { observerName, observerNumber, targetStudentNumber });
+    
     const mockRole = '초기발견자1'; // 시뮬레이션용 역할
+    console.log('시뮬레이션 역할:', mockRole);
     
     currentChecklist = roleChecklists[mockRole] || [];
     checklistState = new Array(currentChecklist.length).fill(false);
+    
+    console.log('체크리스트 설정 완료:', {
+        checklistLength: currentChecklist.length,
+        stateLength: checklistState.length
+    });
 
     document.getElementById('checklistContainer').classList.add('active');
     
@@ -444,6 +458,7 @@ function simulateObserverRegistration(observerName, observerNumber, targetStuden
     renderChecklist();
     updateProgress();
     
+    console.log('✅ 시뮬레이션 모드 관찰자 등록 완료!');
     showMessage('GitHub Pages 모드: 관찰이 시작되었습니다!', 'success');
 }
 
