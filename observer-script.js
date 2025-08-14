@@ -409,15 +409,37 @@ function registerObserver() {
     console.log('생성된 observerId:', observerId);
     
     if (window.location.hostname.includes('github.io')) {
-        console.log('GitHub Pages 모드: 시뮬레이션으로 전환');
-        console.log('simulateObserverRegistration 함수 호출 시도...');
+        console.log('GitHub Pages 모드: 실제 서버 연결 시도 중...');
         
-        // GitHub Pages 모드: 시뮬레이션
-        try {
+        // GitHub Pages에서도 실제 서버 연결 시도
+        if (socket && socket.connected) {
+            console.log('실제 서버에 registerObserver 이벤트 전송 중...');
+            console.log('소켓 상태:', {
+                exists: !!socket,
+                connected: socket ? socket.connected : false,
+                id: socket ? socket.id : 'undefined'
+            });
+            
+            socket.emit('registerObserver', {
+                observerId,
+                observerName,
+                observerNumber: parseInt(observerNumber),
+                targetStudentNumber: parseInt(targetStudentNumber)
+            });
+            
+            console.log('registerObserver 이벤트 전송 완료');
+            document.getElementById('registrationForm').classList.remove('active');
+            showMessage('관찰 대상 정보를 확인 중입니다...', 'success');
+            
+            // 3초 후에도 응답이 없으면 시뮬레이션 모드로 전환
+            setTimeout(() => {
+                console.log('3초 후 응답 없음, 시뮬레이션 모드로 전환');
+                simulateObserverRegistration(observerName, observerNumber, targetStudentNumber);
+            }, 3000);
+            
+        } else {
+            console.log('소켓 연결 없음, 시뮬레이션 모드로 전환');
             simulateObserverRegistration(observerName, observerNumber, targetStudentNumber);
-            console.log('✅ simulateObserverRegistration 함수 호출 성공');
-        } catch (error) {
-            console.error('❌ simulateObserverRegistration 함수 호출 실패:', error);
         }
         return;
     }
@@ -441,16 +463,34 @@ function registerObserver() {
     showMessage('관찰 대상 정보를 확인 중입니다...', 'success');
 }
 
+// 선택된 학생 번호로 학생 정보 찾기
+function getSelectedStudentByNumber(studentNumber) {
+    const mockStudents = [
+        { number: 1, role: '초기발견자1', name: '1번 학생' },
+        { number: 2, role: '신고자1', name: '2번 학생' },
+        { number: 3, role: '보조자1', name: '3번 학생' },
+        { number: 4, role: '초기발견자2', name: '4번 학생' },
+        { number: 5, role: '신고자2', name: '5번 학생' },
+        { number: 6, role: '보조자2', name: '6번 학생' }
+    ];
+    
+    return mockStudents.find(student => student.number == studentNumber);
+}
+
 // GitHub Pages 모드에서 관찰자 등록 시뮬레이션
 function simulateObserverRegistration(observerName, observerNumber, targetStudentNumber) {
     console.log('=== 시뮬레이션 모드로 관찰자 등록 시작 ===');
     console.log('함수 호출됨 - 입력값:', { observerName, observerNumber, targetStudentNumber });
     
     try {
-        const mockRole = '초기발견자1'; // 시뮬레이션용 역할
-        console.log('시뮬레이션 역할:', mockRole);
+        // 선택된 학생의 실제 역할 사용
+        const selectedStudent = getSelectedStudentByNumber(targetStudentNumber);
+        const actualRole = selectedStudent ? selectedStudent.role : '초기발견자1';
         
-        currentChecklist = roleChecklists[mockRole] || [];
+        console.log('선택된 학생 정보:', selectedStudent);
+        console.log('실제 역할:', actualRole);
+        
+        currentChecklist = roleChecklists[actualRole] || [];
         checklistState = new Array(currentChecklist.length).fill(false);
         
         console.log('체크리스트 설정 완료:', {
@@ -461,7 +501,7 @@ function simulateObserverRegistration(observerName, observerNumber, targetStuden
         console.log('DOM 요소 업데이트 시작...');
         document.getElementById('checklistContainer').classList.add('active');
         
-        document.getElementById('roleTitle').textContent = `관찰 대상: ${mockRole}`;
+        document.getElementById('roleTitle').textContent = `관찰 대상: ${actualRole}`;
         document.getElementById('studentInfo').textContent = `${targetStudentNumber}번 학생`;
         
         console.log('체크리스트 렌더링 시작...');
