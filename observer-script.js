@@ -271,6 +271,12 @@ function setupSocketEvents() {
         document.getElementById('targetStudentNumber').value = selectedStudent.number;
         
         showMessage(`${selectedStudent.number}번 학생 (${selectedStudent.role})이 랜덤으로 배정되었습니다.`, 'success');
+        
+        // 랜덤 배정 후 자동으로 관찰자 등록
+        console.log('랜덤 배정 완료, 자동으로 관찰자 등록 시도...');
+        setTimeout(() => {
+            registerObserver();
+        }, 1000); // 1초 후 자동 등록
     });
 
     socket.on('dramaStarted', (data) => {
@@ -356,6 +362,12 @@ function assignRandomStudent() {
         
         document.getElementById('targetStudentNumber').value = selectedStudent.number;
         showMessage(`${selectedStudent.number}번 학생 (${selectedStudent.role})이 랜덤으로 배정되었습니다.`, 'success');
+        
+        // 랜덤 배정 후 자동으로 관찰자 등록
+        console.log('GitHub Pages 모드: 랜덤 배정 완료, 자동으로 관찰자 등록 시도...');
+        setTimeout(() => {
+            registerObserver();
+        }, 1000); // 1초 후 자동 등록
         return;
     }
     
@@ -370,22 +382,40 @@ function assignRandomStudent() {
 
 // 관찰자 등록
 function registerObserver() {
+    console.log('=== 관찰자 등록 함수 호출됨 ===');
+    
     const observerName = document.getElementById('observerName').value.trim();
     const observerNumber = document.getElementById('observerNumber').value.trim();
     const targetStudentNumber = document.getElementById('targetStudentNumber').value.trim();
 
+    console.log('입력된 값들:', {
+        observerName,
+        observerNumber,
+        targetStudentNumber
+    });
+
     if (!observerName || !observerNumber || !targetStudentNumber) {
+        console.log('❌ 필수 필드가 비어있음');
         showMessage('모든 필드를 입력해주세요.', 'error');
         return;
     }
 
     observerId = `${observerNumber}_${Date.now()}`;
+    console.log('생성된 observerId:', observerId);
     
     if (window.location.hostname.includes('github.io')) {
+        console.log('GitHub Pages 모드: 시뮬레이션으로 전환');
         // GitHub Pages 모드: 시뮬레이션
         simulateObserverRegistration(observerName, observerNumber, targetStudentNumber);
         return;
     }
+    
+    console.log('실제 서버에 registerObserver 이벤트 전송 중...');
+    console.log('소켓 상태:', {
+        exists: !!socket,
+        connected: socket ? socket.connected : false,
+        id: socket ? socket.id : 'undefined'
+    });
     
     socket.emit('registerObserver', {
         observerId,
@@ -394,6 +424,7 @@ function registerObserver() {
         targetStudentNumber: parseInt(targetStudentNumber)
     });
 
+    console.log('registerObserver 이벤트 전송 완료');
     document.getElementById('registrationForm').classList.remove('active');
     showMessage('관찰 대상 정보를 확인 중입니다...', 'success');
 }
