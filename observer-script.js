@@ -94,7 +94,39 @@ const roleChecklists = {
 };
 
 // 서버 URL 설정 (GitHub Pages 배포 후 실제 서버 URL로 변경)
-const SERVER_URL = 'http://127.0.0.1:3000'; // 교사용 서버 URL
+const SERVER_URL = getServerURL(); // 동적으로 서버 URL 결정
+
+// 서버 URL 동적 결정 함수
+function getServerURL() {
+    const hostname = window.location.hostname;
+    const fullUrl = window.location.href;
+    
+    console.log('현재 호스트명:', hostname);
+    console.log('전체 URL:', fullUrl);
+    
+    // GitHub Pages에서 접속하는 경우 (realhoonjang.github.io)
+    if (hostname.includes('github.io')) {
+        console.log('GitHub Pages 감지됨');
+        
+        // 모바일 기기 감지
+        if (isMobileDevice()) {
+            console.log('모바일 기기 감지됨 - 로컬 네트워크 IP 사용');
+            return 'http://192.168.191.46:3000'; // 로컬 네트워크 IP
+        } else {
+            console.log('데스크톱 기기 감지됨 - 로컬 IP 사용');
+            return 'http://192.168.191.46:3000'; // 로컬 네트워크 IP (컴퓨터에서도 접근 가능)
+        }
+    }
+    
+    // 로컬에서 접속하는 경우
+    console.log('로컬 접속 감지됨');
+    return 'http://127.0.0.1:3000';
+}
+
+// 모바일 기기 감지 함수
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
 
 // 소켓 연결 초기화
 function initializeSocket() {
@@ -125,8 +157,26 @@ function initializeSocket() {
             console.log('교사용 서버에 성공적으로 연결되었습니다!');
             console.log('소켓 ID:', socket.id);
             console.log('연결 상태:', socket.connected);
+            console.log('사용된 서버 URL:', SERVER_URL);
             updateConnectionStatus(true);
-            showMessage('교사용 서버에 연결되었습니다!', 'success');
+            
+            // GitHub Pages에서 접속한 경우 특별 안내
+            if (window.location.hostname.includes('github.io')) {
+                if (isMobileDevice()) {
+                    showMessage('모바일에서 GitHub Pages를 통해 교사용 서버에 연결되었습니다!', 'success');
+                    console.log('GitHub Pages + 모바일 기기로 감지됨');
+                } else {
+                    showMessage('GitHub Pages를 통해 교사용 서버에 연결되었습니다!', 'success');
+                    console.log('GitHub Pages + 데스크톱 기기로 감지됨');
+                }
+            } else {
+                // 로컬에서 접속한 경우
+                if (isMobileDevice()) {
+                    showMessage('모바일에서 교사용 서버에 연결되었습니다!', 'success');
+                } else {
+                    showMessage('교사용 서버에 연결되었습니다!', 'success');
+                }
+            }
             
             // 실제 연결 상태 확인
             testServerConnection();
@@ -136,6 +186,17 @@ function initializeSocket() {
         socket.on('connect_error', (error) => {
             console.log('서버 연결 실패, 시뮬레이션 모드로 전환:', error);
             console.log('에러 상세:', error.message);
+            console.log('시도한 서버 URL:', SERVER_URL);
+            console.log('현재 접속 도메인:', window.location.hostname);
+            
+            // GitHub Pages에서 접속한 경우 특별 안내
+            if (window.location.hostname.includes('github.io')) {
+                showMessage(`GitHub Pages에서 서버 연결 실패: ${SERVER_URL}`, 'error');
+                console.log('GitHub Pages 접속으로 인한 연결 실패');
+            } else {
+                showMessage(`서버 연결 실패: ${SERVER_URL}`, 'error');
+            }
+            
             simulateServerConnection();
         });
         
@@ -172,9 +233,10 @@ function simulateServerConnection() {
 // 실제 서버 연결 상태 테스트
 function testServerConnection() {
     console.log('실제 서버 연결 상태 테스트 중...');
+    console.log('테스트할 서버 URL:', SERVER_URL);
     
-    // HTTP 요청으로 서버 연결 확인
-    fetch('http://127.0.0.1:3000/api/test', {
+    // HTTP 요청으로 서버 연결 확인 (동적 URL 사용)
+    fetch(`${SERVER_URL}/api/test`, {
         method: 'GET',
         mode: 'cors',
         credentials: 'include'
