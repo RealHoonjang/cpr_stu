@@ -93,39 +93,34 @@ const roleChecklists = {
     ]
 };
 
-// 서버 URL 설정 (GitHub Pages 배포 후 실제 서버 URL로 변경)
-const SERVER_URL = getServerURL(); // 동적으로 서버 URL 결정
+// 서버 URL 설정 (동적으로 결정)
+const SERVER_URL = getServerURL();
 
 // 서버 URL 동적 결정 함수
 function getServerURL() {
     const hostname = window.location.hostname;
-    const fullUrl = window.location.href;
     
-    console.log('현재 호스트명:', hostname);
-    console.log('전체 URL:', fullUrl);
-    
-    // GitHub Pages에서 접속하는 경우 (realhoonjang.github.io)
+    // GitHub Pages에서 접속하는 경우 (외부 인터넷)
     if (hostname.includes('github.io')) {
-        console.log('GitHub Pages 감지됨');
-        
-        // 모바일 기기 감지
-        if (isMobileDevice()) {
-            console.log('모바일 기기 감지됨 - 로컬 네트워크 IP 사용');
-            return 'http://192.168.191.46:3000'; // 로컬 네트워크 IP
-        } else {
-            console.log('데스크톱 기기 감지됨 - 로컬 네트워크 IP 사용');
-            return 'http://192.168.191.46:3000'; // 로컬 네트워크 IP (컴퓨터에서도 접근 가능)
-        }
+        console.log('GitHub Pages 감지됨 - 시뮬레이션 모드');
+        return null; // 시뮬레이션 모드
     }
     
-    // 로컬에서 접속하는 경우
-    console.log('로컬 접속 감지됨');
-    return 'http://127.0.0.1:3000';
-}
-
-// 모바일 기기 감지 함수
-function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // 로컬 네트워크에서 접속하는 경우 (같은 Wi-Fi)
+    if (hostname === '192.168.191.46' || hostname === 'localhost' || hostname === '127.0.0.1') {
+        console.log('로컬 네트워크 접속 감지됨 - 실제 서버 연결');
+        return 'http://192.168.191.46:3000';
+    }
+    
+    // 기타 로컬 네트워크 IP (192.168.x.x, 10.x.x.x, 172.x.x.x)
+    if (hostname.match(/^(192\.168\.|10\.|172\.)/)) {
+        console.log('로컬 네트워크 IP 감지됨 - 실제 서버 연결');
+        return `http://${hostname}:3000`;
+    }
+    
+    // 기본값: 시뮬레이션 모드
+    console.log('알 수 없는 접속 - 시뮬레이션 모드');
+    return null;
 }
 
 // 소켓 연결 초기화
@@ -134,6 +129,13 @@ function initializeSocket() {
     if (typeof io === 'undefined') {
         console.error('Socket.IO 라이브러리가 로드되지 않았습니다.');
         console.log('시뮬레이션 모드로 전환합니다.');
+        simulateServerConnection();
+        return;
+    }
+    
+    // GitHub Pages 또는 서버 URL이 없는 경우 시뮬레이션 모드
+    if (!SERVER_URL) {
+        console.log('GitHub Pages 모드 또는 서버 URL 없음 - 시뮬레이션 모드로 전환');
         simulateServerConnection();
         return;
     }
@@ -152,31 +154,13 @@ function initializeSocket() {
         
         setupSocketEvents();
         
-        // 연결 성공 시 시뮬레이션 모드 비활성화
+        // 연결 성공 시
         socket.on('connect', () => {
             console.log('교사용 서버에 성공적으로 연결되었습니다!');
             console.log('소켓 ID:', socket.id);
             console.log('연결 상태:', socket.connected);
-            console.log('사용된 서버 URL:', SERVER_URL);
             updateConnectionStatus(true);
-            
-            // GitHub Pages에서 접속한 경우 특별 안내
-            if (window.location.hostname.includes('github.io')) {
-                if (isMobileDevice()) {
-                    showMessage('모바일에서 GitHub Pages를 통해 교사용 서버에 연결되었습니다!', 'success');
-                    console.log('GitHub Pages + 모바일 기기로 감지됨');
-                } else {
-                    showMessage('GitHub Pages를 통해 교사용 서버에 연결되었습니다!', 'success');
-                    console.log('GitHub Pages + 데스크톱 기기로 감지됨');
-                }
-            } else {
-                // 로컬에서 접속한 경우
-                if (isMobileDevice()) {
-                    showMessage('모바일에서 교사용 서버에 연결되었습니다!', 'success');
-                } else {
-                    showMessage('교사용 서버에 연결되었습니다!', 'success');
-                }
-            }
+            showMessage('교사용 서버에 연결되었습니다!', 'success');
             
             // 실제 연결 상태 확인
             testServerConnection();
@@ -186,17 +170,6 @@ function initializeSocket() {
         socket.on('connect_error', (error) => {
             console.log('서버 연결 실패, 시뮬레이션 모드로 전환:', error);
             console.log('에러 상세:', error.message);
-            console.log('시도한 서버 URL:', SERVER_URL);
-            console.log('현재 접속 도메인:', window.location.hostname);
-            
-            // GitHub Pages에서 접속한 경우 특별 안내
-            if (window.location.hostname.includes('github.io')) {
-                showMessage(`GitHub Pages에서 서버 연결 실패: ${SERVER_URL}`, 'error');
-                console.log('GitHub Pages 접속으로 인한 연결 실패');
-            } else {
-                showMessage(`서버 연결 실패: ${SERVER_URL}`, 'error');
-            }
-            
             simulateServerConnection();
         });
         
@@ -232,10 +205,16 @@ function simulateServerConnection() {
 
 // 실제 서버 연결 상태 테스트
 function testServerConnection() {
+    // 서버 URL이 없는 경우 테스트 건너뛰기
+    if (!SERVER_URL) {
+        console.log('서버 URL 없음 - 연결 테스트 건너뛰기');
+        return;
+    }
+    
     console.log('실제 서버 연결 상태 테스트 중...');
     console.log('테스트할 서버 URL:', SERVER_URL);
     
-    // HTTP 요청으로 서버 연결 확인 (동적 URL 사용)
+    // HTTP 요청으로 서버 연결 확인
     fetch(`${SERVER_URL}/api/test`, {
         method: 'GET',
         mode: 'cors',
@@ -408,11 +387,12 @@ function showMessage(message, type) {
 function assignRandomStudent() {
     console.log('=== 랜덤 배정 함수 호출됨 ===');
     console.log('현재 도메인:', window.location.hostname);
-    console.log('GitHub Pages 포함 여부:', window.location.hostname.includes('github.io'));
+    console.log('서버 URL:', SERVER_URL);
     
-    if (window.location.hostname.includes('github.io')) {
-        console.log('GitHub Pages 모드로 진입');
-        // GitHub Pages 모드: 시뮬레이션
+    // GitHub Pages 또는 서버 연결이 없는 경우 시뮬레이션
+    if (!SERVER_URL || !socket || !socket.connected) {
+        console.log('시뮬레이션 모드로 진입');
+        // 시뮬레이션 모드: 랜덤 배정
         const mockStudents = [
             { number: 1, role: '초기발견자1', name: '1번 학생' },
             { number: 2, role: '신고자1', name: '2번 학생' },
@@ -430,7 +410,7 @@ function assignRandomStudent() {
         showMessage(`${selectedStudent.number}번 학생 (${selectedStudent.role})이 랜덤으로 배정되었습니다.`, 'success');
         
         // 랜덤 배정 후 자동으로 관찰자 등록
-        console.log('GitHub Pages 모드: 랜덤 배정 완료, 자동으로 관찰자 등록 시도...');
+        console.log('시뮬레이션 모드: 랜덤 배정 완료, 자동으로 관찰자 등록 시도...');
         setTimeout(() => {
             console.log('타이머 완료, registerObserver 호출');
             registerObserver();
@@ -438,12 +418,8 @@ function assignRandomStudent() {
         return;
     }
     
-    if (!socket || !socket.connected) {
-        showMessage('서버에 연결되지 않았습니다.', 'error');
-        return;
-    }
-    
-    console.log('getAvailableStudents 요청 전송');
+    // 실제 서버 연결이 있는 경우
+    console.log('실제 서버에 getAvailableStudents 요청 전송');
     socket.emit('getAvailableStudents');
 }
 
@@ -470,39 +446,10 @@ function registerObserver() {
     observerId = `${observerNumber}_${Date.now()}`;
     console.log('생성된 observerId:', observerId);
     
-    if (window.location.hostname.includes('github.io')) {
-        console.log('GitHub Pages 모드: 실제 서버 연결 시도 중...');
-        
-        // GitHub Pages에서도 실제 서버 연결 시도
-        if (socket && socket.connected) {
-            console.log('실제 서버에 registerObserver 이벤트 전송 중...');
-            console.log('소켓 상태:', {
-                exists: !!socket,
-                connected: socket ? socket.connected : false,
-                id: socket ? socket.id : 'undefined'
-            });
-            
-            socket.emit('registerObserver', {
-                observerId,
-                observerName,
-                observerNumber: parseInt(observerNumber),
-                targetStudentNumber: parseInt(targetStudentNumber)
-            });
-            
-            console.log('registerObserver 이벤트 전송 완료');
-            document.getElementById('registrationForm').classList.remove('active');
-            showMessage('관찰 대상 정보를 확인 중입니다...', 'success');
-            
-            // 3초 후에도 응답이 없으면 시뮬레이션 모드로 전환
-            setTimeout(() => {
-                console.log('3초 후 응답 없음, 시뮬레이션 모드로 전환');
-                simulateObserverRegistration(observerName, observerNumber, targetStudentNumber);
-            }, 3000);
-            
-        } else {
-            console.log('소켓 연결 없음, 시뮬레이션 모드로 전환');
-            simulateObserverRegistration(observerName, observerNumber, targetStudentNumber);
-        }
+    // GitHub Pages 또는 서버 연결이 없는 경우 시뮬레이션
+    if (!SERVER_URL || !socket || !socket.connected) {
+        console.log('시뮬레이션 모드: 관찰자 등록 시도 중...');
+        simulateObserverRegistration(observerName, observerNumber, targetStudentNumber);
         return;
     }
     
