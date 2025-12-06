@@ -1,0 +1,539 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f0f2f5;
+    color: #333;
+    font-size: 16px; /* 기본 폰트 크기 */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.screen {
+    display: none;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.screen.active {
+    display: block;
+}
+
+button {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.main-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+.main-header h1 {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+}
+
+.main-header p {
+    font-size: 1.3rem;
+    opacity: 0.8;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 설정 화면 카드 스타일 */
+.setup-card, .result-container {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.setup-card h2, .result-container h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+/* 폼 스타일 */
+.setup-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-group input:invalid {
+    border-color: #e74c3c;
+}
+
+.form-group input[type="file"] {
+    border: none;
+    padding: 10px 0;
+}
+
+#roster-status {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #27ae60;
+    font-weight: 500;
+}
+
+/* 조별 설정 스타일 */
+.group-setup {
+    margin-top: 30px;
+}
+
+.group-config {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    align-items: center;
+    text-align: center;
+}
+
+.group-item-config label {
+    display: block;
+    font-weight: 500;
+    color: #2c3e50;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.group-item-config input {
+    width: 80px;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+/* 버튼 스타일 */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.final-buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.result-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.result-item {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.result-item h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.result-item p {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.result-item .student-list {
+    list-style: none;
+}
+
+.result-item .student-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result-item .student-list li:last-child {
+    border-bottom: none;
+}
+
+.result-item .student-number {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.result-item .student-role {
+    background: #667eea;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.timer-pres.warning {
+    animation: pulse 1s infinite;
+    color: #f39c12;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* --- 전자칠판 모드 스타일 --- */
+#learning-screen.active {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    color: white;
+    display: block;
+}
+
+.learning-content {
+    flex-grow: 1;
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+    padding: 10px;
+}
+
+#role-checklist-container {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+#role-checklist-container h3 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 10px;
+}
+
+#step-guide-container {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow-y: auto;
+}
+#step-guide-container h3 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+#step-guide-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+#step-guide-content h4 {
+    margin-top: 15px;
+    color: #667eea;
+}
+#step-guide-content p {
+    margin-bottom: 10px;
+}
+
+.role-checklist {
+    list-style: none;
+    padding: 0;
+    flex-grow: 1;
+}
+.role-checklist li {
+    font-size: 1.2rem;
+    padding: 12px 5px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.role-checklist li:hover {
+    background-color: #f0f2f5;
+}
+.role-checklist li.active-step {
+    background-color: #e2e8f0;
+    font-weight: 700;
+}
+.role-checklist li.checked {
+    background-color: #e6ffed;
+    color: #27ae60;
+    text-decoration: line-through;
+}
+.role-checklist input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    margin-right: 15px;
+}
+
+.presentation-footer {
+    text-align: center;
+    padding-top: 20px;
+}
+.btn.btn-large {
+    font-size: 1.5rem;
+    padding: 15px 40px;
+}
+
+/* --- Modal 스타일 --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+}
+.modal-content h2 { font-size: 2.2rem; margin-bottom: 20px; }
+.modal-body p { font-size: 1.3rem; margin-bottom: 25px; }
+
+.current-group-roles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+.role-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+.role-item .role-number { font-size: 1.1rem; font-weight: 700; color: #667eea; }
+.role-item .role-name { font-size: 1.3rem; }
+
+.modal-footer { margin-top: 20px; }
+
+.cpr-score-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.cpr-score-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: center;
+    text-align: left;
+}
+
+.cpr-score-item label {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.cpr-score-item input {
+    width: 120px;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    justify-self: end;
+}
+
+.student-selector {
+    margin: 20px 0;
+}
+.student-selector h4 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #2c3e50;
+}
+#student-selector-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+#student-selector-container input {
+    width: 80px;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+/* --- 결과 화면 상세 스타일 --- */
+#detailed-results-container {
+    max-height: 65vh;
+    overflow-y: auto;
+    padding: 15px;
+    background: #f0f2f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.group-result-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 5px solid #667eea;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.group-result-card h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f2f5;
+}
+
+.group-result-card .roles-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.role-result h4 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #34495e;
+    margin-bottom: 10px;
+}
+
+.role-result ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.role-result ul li {
+    padding: 8px 0 8px 25px;
+    position: relative;
+    font-size: 1rem;
+}
+
+.role-result ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid;
+}
+
+.role-result ul li.completed {
+    color: #27ae60;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+.role-result ul li.completed::before {
+    content: '✔';
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    line-height: 16px;
+}
+
+.role-result ul li.not-completed {
+    color: #c0392b;
+}
+.role-result ul li.not-completed::before {
+    content: '✖';
+    background-color: #c0392b;
+    border-color: #c0392b;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    line-height: 16px;
+}

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPR 상황극 교육 프로그램</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="main-header">
+            <h1>🫀 CPR 상황극 교육 프로그램</h1>
+            <p>실전 상황을 통한 심폐소생술 교육</p>
+        </header>
+
+        <!-- 초기 설정 화면 -->
+        <div id="setup-screen" class="screen active">
+            <div class="setup-card">
+                <h2>교육 설정</h2>
+                <div class="setup-form">
+                    <div class="form-group">
+                        <label for="group-count">총 조 수:</label>
+                        <input type="number" id="group-count" value="5" min="1" max="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="time-limit">상황극 제한시간 (분):</label>
+                        <input type="number" id="time-limit" value="5" min="3" max="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="roster-upload">학생 명렬 파일 (Excel):</label>
+                        <input type="file" id="roster-upload" accept=".xlsx, .xls, .csv">
+                        <span id="roster-status"></span>
+                    </div>
+                    <div class="group-setup">
+                        <h3>조별 인원 설정</h3>
+                        <div id="group-config" class="group-config">
+                            <!-- 조별 설정이 동적으로 생성됩니다 -->
+                        </div>
+                    </div>
+                    <div class="mode-buttons">
+                        <button id="start-setup" class="btn btn-primary">평가 시작</button>
+                        <button id="start-relay" class="btn btn-secondary">릴레이 모드 시작</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 상황극 진행 화면 (전자칠판 모드) -->
+        <div id="drama-screen" class="screen">
+           <div class="presentation-header">
+               <div class="header-left">
+                   <h1><span id="current-group-number-pres">1</span>조 상황극</h1>
+                   <p id="scenario-title-pres">시나리오 제목</p>
+               </div>
+               <div class="scenario-details-pres">
+                    <div class="detail-item"><strong>환자 상태:</strong> <span id="patient-condition-pres"></span></div>
+                    <div class="detail-item"><strong>환경:</strong> <span id="environment-pres"></span></div>
+                    <div class="detail-item"><strong>조건:</strong> <span id="scenario-description-pres"></span></div>
+               </div>
+               <div class="header-right">
+                   <div class="timer-pres">
+                       <span>남은 시간</span>
+                       <span id="time-remaining-pres">05:00</span>
+                   </div>
+               </div>
+           </div>
+
+           <div id="role-checklist-container" class="role-checklist-cards">
+               <!-- The checklist cards will be rendered here by JS -->
+           </div>
+
+           <div class="presentation-footer">
+                <button id="next-group-button" class="btn btn-primary btn-large">다음 조로</button>
+           </div>
+        </div>
+
+        <!-- 릴레이 모드 화면 -->
+        <div id="relay-screen" class="screen">
+            <div class="relay-container">
+                <div class="relay-header">
+                    <h2>🔄 릴레이 모드</h2>
+                    <p>3명이 순차적으로 CPR을 이어받아 더 높은 점수를 얻는 팀이 승리합니다!</p>
+                </div>
+                
+                                 <div class="relay-setup">
+                     <div class="relay-form">
+                         <div class="form-group">
+                             <label for="relay-roster-upload">학생 명렬 파일 (Excel):</label>
+                             <input type="file" id="relay-roster-upload" accept=".xlsx, .xls, .csv">
+                             <span id="relay-roster-status"></span>
+                         </div>
+                         <div class="form-group">
+                             <label for="relay-time-limit">릴레이 제한시간 (분):</label>
+                             <input type="number" id="relay-time-limit" value="3" min="2" max="8">
+                         </div>
+
+                         <div class="form-group">
+                             <label for="relay-team-size">팀당 인원:</label>
+                             <input type="number" id="relay-team-size" value="3" min="3" max="4" readonly>
+                             <small>릴레이 모드는 팀당 3명으로 고정됩니다.</small>
+                         </div>
+                         <div class="form-group">
+                             <label for="relay-round-count">라운드 수:</label>
+                             <input type="number" id="relay-round-count" value="2" min="2" max="5">
+                             <small>팀당 인원에 따라 적절한 라운드 수를 설정하세요.</small>
+                         </div>
+                         <button id="start-relay-game" class="btn btn-primary">릴레이 게임 시작</button>
+                         <button onclick="showScreen('setup')" class="btn btn-secondary">메인으로 돌아가기</button>
+                     </div>
+                 </div>
+            </div>
+        </div>
+
+        <!-- 릴레이 게임 진행 화면 -->
+        <div id="relay-game-screen" class="screen">
+            <div class="relay-game-header">
+                <h2>🔄 릴레이 게임 진행</h2>
+                <div class="relay-game-info">
+                    <div class="relay-round-info">
+                        <span>현재 라운드</span>
+                        <span id="current-round-display">1</span>
+                        <span>/ <span id="total-rounds-display">2</span></span>
+                    </div>
+                    <div class="relay-timer">
+                        <span>남은 시간</span>
+                        <span id="relay-time-remaining">03:00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relay-scenario-info">
+                <div class="scenario-card">
+                    <h3>📋 시나리오</h3>
+                    <div class="scenario-content">
+                        <div class="scenario-item">
+                            <strong>상황:</strong> <span id="relay-situation"></span>
+                        </div>
+                        <div class="scenario-item">
+                            <strong>환경:</strong> <span id="relay-environment"></span>
+                        </div>
+                        <div class="scenario-item">
+                            <strong>특별 조건:</strong> <span id="relay-condition"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relay-teams-container">
+                <!-- 팀들이 동적으로 생성됩니다 -->
+            </div>
+            
+            <div class="relay-controls">
+                <button id="next-round" class="btn btn-secondary">다음 라운드</button>
+                <button id="end-relay-game" class="btn btn-primary">게임 종료</button>
+                <button onclick="showScreen('setup')" class="btn btn-secondary">메인으로 돌아가기</button>
+            </div>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="result-screen" class="screen">
+            <div class="result-container">
+                <h2>교육 결과</h2>
+                <div id="detailed-results-container">
+                    <!-- 상세 결과가 여기에 동적으로 생성됩니다. -->
+                </div>
+                <div class="final-buttons">
+                    <button id="restart-program" class="btn btn-primary">새로 시작</button>
+                    <button id="export-results" class="btn btn-secondary">결과 내보내기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 역할 배정 Modal -->
+    <div id="role-assignment-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2 id="modal-title">1조 역할 배정</h2>
+            <div id="modal-body">
+                <p><span id="modal-group-size">6</span>명이 참여합니다.</p>
+                <div class="student-selector">
+                    <h4>참여 학생 번호 입력</h4>
+                    <div id="student-selector-container">
+                        <!-- 학생 번호 입력 필드가 동적으로 생성됩니다. -->
+                    </div>
+                </div>
+                <button id="assign-and-show-roles" class="btn btn-secondary">역할 랜덤 배정</button>
+                <div id="modal-roles-display" class="current-group-roles"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="start-drama-from-modal" class="btn btn-primary" style="display: none;">상황극 시작</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CPR 점수 입력 Modal -->
+    <div id="cpr-score-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2 id="cpr-modal-title">1조 CPR 점수 입력</h2>
+            <div id="cpr-modal-body" class="cpr-score-inputs">
+                <!-- 점수 입력 필드가 동적으로 생성됩니다 -->
+            </div>
+            <div class="modal-footer">
+                <button id="save-scores-and-continue" class="btn btn-primary">저장하고 계속하기</button>
+            </div>
+        </div>
+    </div>
+
+    
+
+     <!-- 릴레이 역할 배정 Modal -->
+     <div id="relay-role-assignment-modal" class="modal-overlay" style="display: none;">
+         <div class="modal-content">
+             <h2 id="relay-modal-title">릴레이 역할 배정</h2>
+             <div id="relay-modal-body">
+                 <p><span id="relay-modal-team-count">3</span>팀이 참여합니다.</p>
+                 <div class="relay-team-selector" id="relay-team-selector" style="display: none;">
+                     <h4>참여할 팀 선택</h4>
+                     <div id="relay-team-checkboxes">
+                         <!-- 팀 체크박스가 동적으로 생성됩니다 -->
+                     </div>
+                 </div>
+                 <div class="relay-student-selector" id="relay-student-selector">
+                     <h4>각 팀별 학생 번호 입력</h4>
+                     <div id="relay-student-selector-container">
+                         <!-- 팀별 학생 번호 입력 필드가 동적으로 생성됩니다 -->
+                     </div>
+                 </div>
+                 <button id="assign-relay-roles" class="btn btn-secondary">역할 랜덤 배정</button>
+                 <div id="relay-modal-roles-display" class="relay-roles-display"></div>
+             </div>
+             <div class="modal-footer">
+                 <button id="start-relay-game-from-modal" class="btn btn-primary" style="display: none;">릴레이 게임 시작</button>
+             </div>
+         </div>
+     </div>
+
+     <!-- 릴레이 점수 입력 Modal -->
+     <div id="relay-score-modal" class="modal-overlay" style="display: none;">
+         <div class="modal-content">
+             <h2 id="relay-score-modal-title">릴레이 점수 입력</h2>
+             <div id="relay-score-modal-body">
+                 <div class="relay-round-score-info">
+                     <p><strong id="relay-score-round-display">1</strong>라운드 점수를 입력하세요.</p>
+                 </div>
+                 <div class="relay-score-inputs">
+                     <!-- 조별 점수 입력 필드가 동적으로 생성됩니다 -->
+                 </div>
+             </div>
+             <div class="modal-footer">
+                 <button id="relay-save-scores" class="btn btn-primary">점수 저장</button>
+                 <button onclick="closeRelayScoreModal()" class="btn btn-secondary">취소</button>
+             </div>
+         </div>
+     </div>
+
+    <audio id="bg-audio" loop></audio>
+    <audio id="sfx-audio"></audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

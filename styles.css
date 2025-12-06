@@ -1,0 +1,1584 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f0f2f5;
+    color: #333;
+    font-size: 18px; /* 기본 폰트 크기 */
+}
+
+.container {
+    max-width: 7000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.screen {
+    display: none;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.screen.active {
+    display: block;
+}
+
+button {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.main-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+.main-header h1 {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+}
+
+.main-header p {
+    font-size: 1.3rem;
+    opacity: 0.8;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 설정 화면 카드 스타일 */
+.setup-card, .result-container {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.setup-card h2, .result-container h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+/* 폼 스타일 */
+.setup-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 18px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-group input:invalid {
+    border-color: #e74c3c;
+}
+
+.form-group input[type="file"] {
+    border: none;
+    padding: 10px 0;
+}
+
+#roster-status {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #27ae60;
+    font-weight: 500;
+}
+
+/* 조별 설정 스타일 */
+.group-setup {
+    margin-top: 30px;
+}
+
+.group-config {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    align-items: center;
+    text-align: center;
+}
+
+.group-item-config label {
+    display: block;
+    font-weight: 500;
+    color: #2c3e50;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.group-item-config input {
+    width: 80px;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1.125rem;
+}
+
+/* 버튼 스타일 */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.final-buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* 모드 버튼 스타일 */
+.mode-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.mode-buttons .btn {
+    min-width: 150px;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+}
+
+.result-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.result-item {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.result-item h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.result-item p {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.result-item .student-list {
+    list-style: none;
+}
+
+.result-item .student-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result-item .student-list li:last-child {
+    border-bottom: none;
+}
+
+.result-item .student-number {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.result-item .student-role {
+    background: #667eea;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.timer-pres.warning {
+    animation: pulse 1s infinite;
+    color: #f39c12;
+    background: rgba(243, 156, 18, 0.2) !important;
+    border: 2px solid #f39c12;
+}
+
+/* 타이머가 30초 이하일 때 더 강한 경고 효과 */
+.timer-pres.critical {
+    animation: criticalPulse 0.5s infinite;
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.2) !important;
+    border: 2px solid #e74c3c;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes criticalPulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- 전자칠판 모드 스타일 --- */
+#drama-screen.active {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    color: white;
+    /* 스크롤바 스타일링 */
+    overflow: hidden;
+}
+
+/* 스크롤바 스타일링 */
+.role-checklist-cards::-webkit-scrollbar {
+    width: 12px;
+}
+
+.role-checklist-cards::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+}
+
+.role-checklist-cards::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 6px;
+}
+
+.role-checklist-cards::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.5);
+}
+
+.presentation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 25px 30px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 15px;
+    margin-bottom: 30px;
+    /* 헤더 높이 최적화 */
+    min-height: 140px;
+    /* 반응형 레이아웃 */
+    flex-wrap: wrap;
+    gap: 20px;
+    /* 전체 너비 활용 */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.header-left {
+    /* 좌측 영역 너비 조정 - 더 작게 */
+    min-width: 250px;
+    flex-shrink: 0;
+}
+
+.header-left h1 { 
+    font-size: 2.8rem; 
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+.header-left p { 
+    font-size: 1.6rem; 
+    opacity: 0.9;
+    line-height: 1.3;
+}
+
+.scenario-details-pres {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(255,255,255,0.9);
+    padding: 20px 25px;
+    border-radius: 12px;
+    /* 시나리오 정보 최대 너비 대폭 확장 - 전체 화면 활용 */
+    max-width: 1400px;
+    flex: 1;
+    /* 시나리오 정보 강조 */
+    border: 2px solid rgba(255,255,255,0.3);
+    /* 전체 너비의 더 많은 부분을 차지하도록 설정 */
+    min-width: 1200px;
+    /* 중앙 영역이 더 많은 공간을 차지하도록 설정 */
+    flex-grow: 4;
+}
+
+.scenario-details-pres .detail-item { 
+    font-size: 1.8rem; 
+    line-height: 1.5;
+    font-weight: 600;
+    color: #000;
+    /* 긴 텍스트가 한 줄로 표시되도록 설정 */
+    white-space: nowrap;
+    /* 각 항목 간격 확대 */
+    padding: 8px 0;
+    /* 텍스트가 적절히 표시되도록 설정 */
+    /* 텍스트 오버플로우 방지 */
+    overflow: visible;
+    /* 텍스트가 한 줄로 표시되도록 최적화 */
+    display: flex;
+    align-items: center;
+    /* 전체 너비 활용 */
+    width: 100%;
+}
+
+/* 시나리오 정보 제목 강조 */
+.scenario-details-pres .detail-item strong {
+    font-size: 2rem;
+    color: #000;
+    text-shadow: none;
+    margin-right: 25px;
+    /* 제목과 내용 사이 간격 확대 */
+    min-width: 120px;
+    display: inline-block;
+    /* 제목이 줄바꿈되지 않도록 설정 */
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-weight: 700;
+}
+
+.header-right {
+    /* 우측 영역 너비 조정 - 더 작게 */
+    flex-shrink: 0;
+    min-width: 150px;
+}
+
+.header-right .timer-pres {
+    font-size: 1.7rem;
+    text-align: center;
+    background: rgba(255,255,255,0.15);
+    padding: 20px 25px;
+    border-radius: 12px;
+    min-width: 160px;
+    /* 타이머 강조 */
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+.header-right .timer-pres span:last-child {
+    font-size: 3.1rem;
+    font-weight: 700;
+    display: block;
+    margin-top: 8px;
+    /* 타이머 숫자 강조 */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+/* 체크리스트 카드 컨테이너 최적화 */
+.role-checklist-cards {
+    flex-grow: 1;
+    display: grid;
+    /* 가로로 3명씩 배치하도록 수정 */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    overflow-y: auto;
+    padding: 20px;
+    /* 최대 너비 제한 제거하여 전체 화면 활용 */
+    max-width: none;
+    margin: 0;
+    /* 카드들이 균등하게 배치되도록 설정 */
+    align-items: start;
+}
+
+/* 화면이 좁을 때는 2열, 더 좁을 때는 1열로 조정 */
+@media (max-width: 1200px) {
+    .role-checklist-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        padding: 16px;
+    }
+    
+    .scenario-details-pres {
+        min-width: 800px;
+        max-width: 1000px;
+    }
+}
+
+@media (max-width: 800px) {
+    .role-checklist-cards {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 14px;
+    }
+    
+    .scenario-details-pres {
+        min-width: 600px;
+        max-width: 700px;
+    }
+    
+    .presentation-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .header-left {
+        min-width: auto;
+        text-align: center;
+    }
+    
+    .scenario-details-pres {
+        min-width: auto;
+        max-width: 100%;
+        text-align: center;
+    }
+}
+
+/* 카드 간격과 여백 최적화 */
+.role-checklist-card {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    /* 카드 높이를 줄여서 한 화면에 더 많은 카드가 들어오도록 조정 */
+    min-height: 220px;
+    /* 카드 간격과 여백 최적화 */
+    margin: 0;
+    /* 카드 너비가 균등하게 분배되도록 설정 */
+    width: 100%;
+    /* 카드 간격 최적화 */
+    box-sizing: border-box;
+}
+
+.role-checklist-card h3 {
+    font-size: 1.6rem;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 8px;
+    /* 제목이 길 때 줄바꿈 처리 */
+    word-wrap: break-word;
+    line-height: 1.3;
+}
+
+/* 역할 제목과 학생명을 분리하여 표시 */
+.role-title-main {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+
+.role-title-student {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #667eea;
+    opacity: 0.9;
+}
+
+.role-checklist {
+    list-style: none;
+    padding: 0;
+    flex-grow: 1;
+    /* 체크리스트 항목 간격 최적화 */
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.role-checklist li {
+    font-size: 1.3rem;
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    /* 체크리스트 항목 배경과 호버 효과 */
+    background: #f8f9fa;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.role-checklist li:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.role-checklist li.checked:hover {
+    background-color: #c3e6cb;
+    transform: translateX(5px);
+}
+
+/* 전자칠판 모드에서 카드 호버 효과 개선 */
+.role-checklist-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+/* 체크리스트 항목 체크 시 시각적 피드백 강화 */
+.role-checklist li.checked {
+    background-color: #d4edda;
+    color: #155724;
+    text-decoration: line-through;
+    border-left: 4px solid #28a745;
+    position: relative;
+}
+
+.role-checklist li.checked::after {
+    content: '✓ 완료';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+    padding: 4px 8px;
+    border-radius: 10px;
+}
+
+.role-checklist input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    margin-right: 15px;
+    /* 체크박스 스타일 개선 */
+    accent-color: #28a745;
+    cursor: pointer;
+}
+
+.presentation-footer {
+    text-align: center;
+    padding-top: 20px;
+    /* 하단 여백 확보 */
+    margin-top: auto;
+}
+
+.btn.btn-large {
+    font-size: 1.7rem;
+    padding: 18px 45px;
+    /* 버튼 강조 효과 */
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.btn.btn-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+/* --- Modal 스타일 --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+}
+.modal-content h2 { font-size: 2.2rem; margin-bottom: 20px; }
+.modal-body p { font-size: 1.3rem; margin-bottom: 25px; }
+
+.current-group-roles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+.role-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+.role-item .role-number { font-size: 1.1rem; font-weight: 700; color: #667eea; }
+.role-item .role-name { font-size: 1.3rem; }
+
+.modal-footer { margin-top: 20px; }
+
+.cpr-score-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.cpr-score-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: center;
+    text-align: left;
+}
+
+.cpr-score-item label {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.cpr-score-item input {
+    width: 120px;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    justify-self: end;
+}
+
+.student-selector {
+    margin: 20px 0;
+}
+.student-selector h4 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #2c3e50;
+}
+#student-selector-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+#student-selector-container input {
+    width: 80px;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1.125rem;
+}
+
+/* --- 결과 화면 상세 스타일 --- */
+#detailed-results-container {
+    max-height: 65vh;
+    overflow-y: auto;
+    padding: 15px;
+    background: #f0f2f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.group-result-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 5px solid #667eea;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.group-result-card h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f2f5;
+}
+
+.group-result-card .roles-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.role-result h4 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #34495e;
+    margin-bottom: 10px;
+}
+
+.role-result ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.role-result ul li {
+    padding: 8px 0 8px 25px;
+    position: relative;
+    font-size: 1rem;
+}
+
+.role-result ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid;
+}
+
+.role-result ul li.completed {
+    color: #27ae60;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+.role-result ul li.completed::before {
+    content: '✔';
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    line-height: 16px;
+}
+
+.role-result ul li.not-completed {
+    color: #c0392b;
+}
+.role-result ul li.not-completed::before {
+    content: '✖';
+    background-color: #c0392b;
+    border-color: #c0392b;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    line-height: 16px;
+}
+
+/* --- 릴레이 모드 스타일 --- */
+.relay-container {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.relay-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.relay-header h2 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 2.2rem;
+}
+
+.relay-header p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.relay-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.relay-form .form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #95a5a6;
+    font-size: 0.9rem;
+}
+
+.relay-form input[readonly] {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+/* 릴레이 게임 화면 스타일 */
+.relay-game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.1);
+    padding: 20px 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.relay-game-info {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.relay-round-info {
+    text-align: center;
+    background: rgba(255,255,255,0.9);
+    padding: 15px 25px;
+    border-radius: 12px;
+    border: 2px solid #ffd700;
+}
+
+.relay-round-info span:first-child {
+    display: block;
+    font-size: 1.3rem;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.relay-round-info span:nth-child(2) {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffd700;
+}
+
+.relay-round-info span:last-child {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #7f8c8d;
+}
+
+.relay-game-header h2 {
+    color: #2c3e50;
+    font-size: 3rem;
+    margin: 0;
+    font-weight: 800;
+}
+
+.relay-timer {
+    text-align: center;
+    background: rgba(255,255,255,0.9);
+    padding: 15px 25px;
+    border-radius: 12px;
+    border: 2px solid #667eea;
+}
+
+.relay-timer span:first-child {
+    display: block;
+    font-size: 1.3rem;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.relay-timer span:last-child {
+    display: block;
+    font-size: 3rem;
+    font-weight: 800;
+    color: #667eea;
+}
+
+.relay-scenario-info {
+    margin-bottom: 30px;
+}
+
+.scenario-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-left: 5px solid #667eea;
+}
+
+.scenario-card h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    text-align: center;
+    font-weight: 700;
+}
+
+.scenario-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.scenario-item {
+    display: flex;
+    align-items: center;
+    font-size: 1.7rem;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.scenario-item strong {
+    color: #2c3e50;
+    min-width: 120px;
+    margin-right: 15px;
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+.relay-teams-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.relay-team-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.relay-team-card.active {
+    border-color: #667eea;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+}
+
+.relay-team-card h4 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.6rem;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f2f5;
+    font-weight: 700;
+}
+
+.relay-team-members {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.relay-member {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #e0e0e0;
+}
+
+.relay-member.current {
+    border-left-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.relay-member.completed {
+    border-left-color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+}
+
+.relay-member-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.relay-member-role {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.relay-member-name {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.relay-member-score {
+    font-weight: 800;
+    color: #667eea;
+    font-size: 1.3rem;
+}
+
+.relay-team-total {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-top: 2px solid #e0e0e0;
+}
+
+.relay-team-total span:first-child {
+    display: block;
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.relay-team-total span:last-child {
+    display: block;
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.relay-team-rounds {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 10px 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.round-score {
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+    padding: 3px 0;
+}
+
+.relay-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.relay-controls .btn {
+    min-width: 150px;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+}
+
+/* 릴레이 결과 화면 스타일 */
+.relay-results {
+    text-align: center;
+    padding: 20px;
+}
+
+.relay-results h3 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+.results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.results-list .result-item {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-left: 5px solid #667eea;
+}
+
+.results-list .result-item.winner {
+    border-left-color: #f39c12;
+    background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
+}
+
+.results-list .result-item h4 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+}
+
+.results-list .result-item p {
+    color: #667eea;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.member-scores {
+    color: #7f8c8d;
+    font-size: 1rem;
+}
+
+.member-scores span {
+    margin: 0 5px;
+}
+
+.round-scores {
+    margin-top: 10px;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+}
+
+.round-score-item {
+    margin: 8px 0;
+    padding: 8px;
+    background: #ffffff;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+}
+
+.round-score-item strong {
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.round-members {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #666;
+    padding: 4px 8px;
+    background: #f0f2f5;
+    border-radius: 3px;
+}
+
+/* 릴레이 팀 액션 버튼 */
+.relay-team-actions {
+    text-align: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.relay-team-actions .btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+}
+
+/* 릴레이 점수 입력 모달 */
+.relay-round-score-info {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.relay-round-detail {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.relay-final-round {
+    margin-top: 8px;
+    font-size: 1rem;
+    color: #e74c3c;
+    font-weight: 600;
+    background: #fdf2f2;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #f5c6cb;
+}
+
+.relay-next-round {
+    margin-top: 8px;
+    font-size: 1rem;
+    color: #2980b9;
+    font-weight: 600;
+    background: #e8f4fd;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #b3d9ff;
+}
+
+.relay-round-score-info p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #2c3e50;
+}
+
+.relay-round-score-info strong {
+    color: #667eea;
+    font-size: 1.4rem;
+}
+
+.relay-score-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.relay-score-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: center;
+    text-align: left;
+}
+
+.relay-score-item label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.relay-score-team-info {
+    margin-top: 5px;
+    padding: 4px 8px;
+    background: #f0f2f5;
+    border-radius: 4px;
+    border-left: 3px solid #667eea;
+}
+
+.relay-score-team-info small {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.relay-score-input {
+    width: 120px;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    justify-self: end;
+}
+
+/* 릴레이 모드 조별 설정 스타일 */
+.relay-group-setup {
+    margin-top: 30px;
+    border-top: 2px solid #e0e0e0;
+    padding-top: 20px;
+}
+
+.relay-group-setup h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+.relay-group-config {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.relay-group-item {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+}
+
+.relay-group-item h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.relay-student-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.relay-student-inputs input {
+    width: 100%;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.relay-student-inputs input:focus {
+    border-color: #667eea;
+    outline: none;
+}
+
+/* 릴레이 역할 배정 모달 스타일 */
+.relay-student-selector {
+    margin: 15px 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.relay-student-selector h4 {
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.relay-team-section {
+    margin-bottom: 15px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.relay-team-section h5 {
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.relay-team-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.relay-team-inputs input {
+    width: 100%;
+    padding: 6px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.relay-team-inputs input:focus {
+    border-color: #667eea;
+    outline: none;
+}
+
+/* 릴레이 역할 배정 결과 표시 스타일 */
+.relay-roles-display {
+    margin-top: 15px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    max-height: 700px;
+    overflow-y: auto;
+}
+
+.relay-roles-display h4 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.relay-team-roles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.relay-team-role-item {
+    background: white;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    min-height: 100px;
+}
+
+.relay-team-role-item h5 {
+    color: #2c3e50;
+    margin-bottom: 6px;
+    font-size: 1rem;
+}
+
+.relay-role-member {
+    background: #f0f2f5;
+    border-radius: 6px;
+    padding: 6px;
+    margin: 4px 0;
+    font-size: 0.9rem;
+}
+
+.relay-team-info {
+    background: #e8f4fd;
+    border-radius: 6px;
+    padding: 6px;
+    margin: 4px 0;
+    font-size: 0.85rem;
+    color: #2980b9;
+    text-align: center;
+    font-weight: 500;
+}
+
+.relay-team-selector {
+    margin: 20px 0;
+}
+
+.relay-team-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.relay-team-checkbox-item {
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.relay-team-checkbox-item:hover {
+    border-color: #667eea;
+    background: #f0f2f5;
+}
+
+.relay-team-checkbox-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    accent-color: #667eea;
+}
+
+.relay-team-checkbox-item label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    cursor: pointer;
+    flex: 1;
+}
+
+.relay-team-checkbox-item.checked {
+    border-color: #667eea;
+    background: #e8f4fd;
+}
+
+/* 다음 라운드 역할 배정 결과 화면 스타일 */
+.relay-role-assignment-result {
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.relay-role-assignment-result h3 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.relay-role-assignment-result h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+.relay-next-round-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #e0e0e0;
+}
+
+.relay-next-round-actions .btn {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.relay-next-round-actions .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.relay-next-round-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.relay-next-round-actions .btn-secondary {
+    background: #6c757d;
+    border: none;
+    color: white;
+}
+
+.relay-next-round-actions .btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
